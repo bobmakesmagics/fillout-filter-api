@@ -28,6 +28,12 @@ interface Question {
 
 type ResponseFiltersType = FilterClauseType[];
 
+app.get('/', (req: Request, res: Response) => {
+  res.json({
+    message: 'Success',
+  });
+});
+
 app.get('/:formId/filteredResponses', async (req: Request, res: Response) => {
   const formId: string = req.params.formId;
   const {
