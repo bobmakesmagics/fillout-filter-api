@@ -58,7 +58,6 @@ app.get('/:formId/filteredResponses', async (req: Request, res: Response) => {
   while (hasMore) {
     try {
       const response = await axios.get(apiUrl, {
-        // Include the API key in the request headers if required
         headers: { Authorization: `Bearer ${process.env.FILLOUT_API_KEY}` },
         params: {
           limit: Number(limit),
@@ -73,18 +72,16 @@ app.get('/:formId/filteredResponses', async (req: Request, res: Response) => {
 
       allResponses = [...allResponses, ...response.data.responses];
 
-      // Check if there are more pages
       hasMore = response.data.totalResponses > allResponses.length;
-      myOffset += Number(limit); // Prepare 'offset' for the next page
+      myOffset += Number(limit);
     } catch (error) {
       console.error('Error fetching submissions:', error);
-      hasMore = false; // Stop loop if there is an error
+      hasMore = false;
     }
   }
 
   let filteredResponses = allResponses;
 
-  // Apply filters
   if (filters) {
     filteredResponses = applyFilters(filteredResponses, filters);
   }
@@ -114,7 +111,6 @@ function applyFilters(responses: any[], filters: ResponseFiltersType): any[] {
         case 'does_not_equal':
           return question.value !== filter.value;
         case 'greater_than':
-          // Assuming that strings are ISO date strings
           if (
             typeof question.value === 'number' &&
             typeof filter.value === 'number'
@@ -128,7 +124,6 @@ function applyFilters(responses: any[], filters: ResponseFiltersType): any[] {
           }
           return false;
         case 'less_than':
-          // Assuming that strings are ISO date strings
           if (
             typeof question.value === 'number' &&
             typeof filter.value === 'number'
